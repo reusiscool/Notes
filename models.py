@@ -2,7 +2,6 @@ from db import get_db
 
 
 class User:
-
     def __init__(self, id_, username, password_hash):
         self._id = id_
         self._username = username
@@ -48,12 +47,13 @@ class UserAlreadyExists(Exception):
 
 
 class Note:
-    def __init__(self, id_, title, body, author, created):
+    def __init__(self, id_, title, body, author, created, deleted):
         self._id = id_
         self._title = title
         self._body = body
         self._author = author
         self._created = created
+        self._deleted = deleted
 
     @staticmethod
     def create(title, body, author_id):
@@ -74,6 +74,11 @@ class Note:
 
     def delete(self):
         db = get_db()
+        db.execute("UPDATE post SET deleted = CURRENT_TIMESTAMP WHERE id = ?", (self.id(),))
+        db.commit()
+
+    def delete_fr(self):
+        db = get_db()
         db.execute("DELETE FROM post WHERE id = ?", (self.id(),))
         db.commit()
 
@@ -92,29 +97,33 @@ class Note:
     def created(self):
         return self._created
 
+    def is_deleted(self):
+        return self._deleted is not None
+
     @staticmethod
     def all():
         posts = get_db().execute(
-            "SELECT id, title, body, created, author_id"
+            "SELECT id, title, body, created, author_id, deleted"
             " FROM post ORDER BY created DESC"
         ).fetchall()
-        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"])
+        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"], p['deleted'])
                 for p in posts]
 
     @staticmethod
     def with_author_id(author_id):
         posts = get_db().execute(
-            "SELECT id, title, body, created, author_id"
+            "SELECT id, title, body, created, author_id, deleted"
             " FROM post WHERE author_id = ? ORDER BY created DESC", (author_id,)
         ).fetchall()
-        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"])
+        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"], p['deleted'])
                 for p in posts]
 
     @staticmethod
     def with_id(id_):
         data = get_db().execute(
-            "SELECT id, title, body, created, author_id"
+            "SELECT id, title, body, created, author_id, deleted"
             " FROM post WHERE id = ?", (id_,)).fetchone()
         if data is None:
             return None
-        return Note(data["id"], data["title"], data["body"], User.with_id(data["author_id"]), data["created"])
+        return Note(data["id"], data["title"], data["body"],
+                    User.with_id(data["author_id"]), data["created"], data['deleted'])

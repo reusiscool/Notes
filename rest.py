@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 
-import models
 from models import User, Note, UserAlreadyExists
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import init_db
@@ -24,6 +23,7 @@ def register():
     password = data["password"]
     error = ''
     status = 'successful'
+    user = None
 
     if not username:
         error = "Username is required."
@@ -33,15 +33,16 @@ def register():
         status = 'failed'
     if not error:
         try:
-            User.register(username, generate_password_hash(password))
+            user = User.register(username, generate_password_hash(password))
         except UserAlreadyExists:
             error = f"User {data['username']} is already registered."
             status = 'failed'
-    return {'status': status, 'error': error}
+    return {'status': status, 'error': error, 'user_id': user.id() if user else ''}
 
 
 @bp.route('/user/login', methods=('POST',))
 def login():
+    """Log in a registered user by adding the user id to the session."""
     data = request.json
     username = data["username"]
     password = data["password"]
@@ -63,13 +64,15 @@ def get_user(id_):
 
 @bp.route('/notes/<int:user_id>')
 def get_all_notes(user_id):
+    """Show all users notes, most recent first."""
     return [{'id': note.id(), 'body': note.body(),
              'title': note.title(), 'created': note.created()}
-            for note in Note.with_author_id(user_id)]
+            for note in Note.with_author_id(user_id) if not note.is_deleted()]
 
 
 @bp.route('/notes', methods=('POST',))
 def create_note():
+    """Create a new post for the current user."""
     data = request.json
     title = data["title"]
     body = data["body"]
@@ -92,16 +95,43 @@ def get_note(note_id):
 
 @bp.route('/note/<int:note_id>', methods=("POST",))
 def update_note(note_id):
+    """Update a post if the current user is the author."""
     note = Note.with_id(note_id)
     data = request.json
     title = data["title"]
     body = data["body"]
+    author_id = data['author_id']
     error = ''
 
     if not title:
         error = "Title is required."
+    elif note.author().id() != author_id:
+        error = 'No permission'
     else:
         note.update(title, body)
+    return {'status': 'failed' if error else 'successful', 'error': error}
+
+
+@bp.route('/delete_note', methods=("POST",))
+def delete_note():
+    """Delete a post.
+
+    Ensures that the post exists and that the logged in user is the
+    author of the post.
+    """
+    data = request.json
+    note = Note.with_id(data['note_id'])
+    if not note:
+        error = 'No such note'
+    elif note.author().id() != data['author_id']:
+        error = 'You dont have enough permission'
+    else:
+        error = ''
+        deleted_notes = [n for n in Note.with_author_id(data['author_id']) if n.is_deleted()]
+        while len(deleted_notes) >= 10:
+            n = deleted_notes.pop()
+            n.delete_fr()
+        note.delete()
     return {'status': 'failed' if error else 'successful', 'error': error}
 
 

@@ -9,11 +9,6 @@ def create_app():
         DATABASE="flask.sql",
     )
 
-    @app.route("/hello")
-    def hello():
-        return "Hello, World!"
-
-    # register the database commands
     import db
     import notes
     import rest
