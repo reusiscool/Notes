@@ -2,14 +2,15 @@
 
 {% block header %}
   <h1>{% block title %}Log In{% endblock %}</h1>
+  <a class="action btn-light btn" href="{{ url_for('auth.index') }}" role="button">Return</a>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+    <label class="input" for="username">Username</label>
+    <input class="input" name="username" id="username" required>
+    <label class="input" for="password">Password</label>
+    <input class="input" type="password" name="password" id="password" required>
+    <input class='btn btn-success' type="submit" value="Log In">
   </form>
 {% endblock %}

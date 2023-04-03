@@ -1,21 +1,23 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Posts{% endblock %}</h1>
-  <a class="action" href="{{ url_for('notes.create') }}">New</a>
+  <h1>{% block title %}Notes{% endblock %}</h1>
+  <a class="action btn-light btn" href="{{ url_for('notes.create') }}">New</a>
+  <a class="action btn-light btn" href="{{ url_for('notes.restore_index') }}">Restore Notes</a>
+  <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}">Logout</a>
 {% endblock %}
 
 {% block content %}
-  {% for post in posts %}
+  {% for note in notes %}
     <article class="post">
       <header>
         <div>
-          <h1>{{ post['title'] }}</h1>
-          <div class="about">created on {{ post['created'] }}</div>
+          <h1>{{ note['title'] }}</h1>
+          <div class="about">created on {{ note['created'] }}</div>
         </div>
-        <a class="action" href="{{ url_for('notes.update', id_=post['id']) }}">Edit</a>
+        <a class="action" href="{{ url_for('notes.update', id_=note['id']) }}">Edit</a>
       </header>
-      <p class="body">{{ post['body'] }}</p>
+      <p class="body">{{ note['body'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>

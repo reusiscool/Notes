@@ -70,6 +70,14 @@ def get_all_notes(user_id):
             for note in Note.with_author_id(user_id) if not note.is_deleted()]
 
 
+@bp.route('/deleted_notes/<int:user_id>')
+def get_all_deleted_notes(user_id):
+    """Show all users deleted notes, most recent first."""
+    return [{'id': note.id(), 'body': note.body(),
+             'title': note.title(), 'created': note.created(), 'deleted': note.deleted()}
+            for note in Note.with_author_id(user_id) if note.is_deleted()]
+
+
 @bp.route('/notes', methods=('POST',))
 def create_note():
     """Create a new post for the current user."""
@@ -128,10 +136,30 @@ def delete_note():
     else:
         error = ''
         deleted_notes = [n for n in Note.with_author_id(data['author_id']) if n.is_deleted()]
+        deleted_notes.sort(key=lambda x: x.deleted())
         while len(deleted_notes) >= 10:
             n = deleted_notes.pop()
             n.delete_fr()
         note.delete()
+    return {'status': 'failed' if error else 'successful', 'error': error}
+
+
+@bp.route('/restore_note', methods=("POST",))
+def restore_note():
+    """Restore a post.
+
+    Ensures that the post exists and that the logged in user is the
+    author of the post.
+    """
+    data = request.json
+    note = Note.with_id(data['note_id'])
+    if not note:
+        error = 'No such note'
+    elif note.author().id() != data['author_id']:
+        error = 'You dont have enough permission'
+    else:
+        error = ''
+        note.restore()
     return {'status': 'failed' if error else 'successful', 'error': error}
 
 

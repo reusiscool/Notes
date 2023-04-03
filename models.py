@@ -82,6 +82,13 @@ class Note:
         db.execute("DELETE FROM post WHERE id = ?", (self.id(),))
         db.commit()
 
+    def restore(self):
+        if not self.is_deleted():
+            raise RuntimeError(f'{self._id} note is not deleted')
+        db = get_db()
+        db.execute("UPDATE post SET deleted = NULL, created = ? WHERE id = ?", (self._deleted, self.id()))
+        db.commit()
+
     def id(self):
         return self._id
 
@@ -96,6 +103,9 @@ class Note:
 
     def created(self):
         return self._created
+
+    def deleted(self):
+        return self._deleted
 
     def is_deleted(self):
         return self._deleted is not None

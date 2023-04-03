@@ -10,8 +10,8 @@ bp = Blueprint("notes", __name__)
 @login_required
 def index():
     user_id = session.get('user_id')
-    posts = requests.get(request.url_root + url_for('rest.get_all_notes', user_id=user_id)).json()
-    return render_template("notes/index.html", posts=posts)
+    notes = requests.get(request.url_root + url_for('rest.get_all_notes', user_id=user_id)).json()
+    return render_template("notes/index.html", notes=notes)
 
 
 @bp.route("/create", methods=("GET", "POST"))
@@ -66,15 +66,24 @@ def delete(id_):
         return redirect(url_for("notes.index"))
 
 
-@bp.route("/<int:id_>/retrieve", methods=("POST",))
+@bp.route("/restore_index", methods=("POST", 'GET'))
 @login_required
-def retrieve(id_):
-    info = requests.post(request.url_root + url_for('rest.delete_note'),
+def restore_index():
+    user_id = session.get('user_id')
+    notes = requests.get(request.url_root + url_for('rest.get_all_deleted_notes', user_id=user_id)).json()
+    return render_template("notes/restore.html", notes=notes)
+
+
+@bp.route("/<int:id_>/restore", methods=("POST",))
+@login_required
+def restore(id_):
+    user_id = session.get('user_id')
+    info = requests.post(request.url_root + url_for('rest.restore_note'),
                          json={
                              'note_id': id_,
-                             'author_id': session.get('user_id')
+                             'author_id': user_id
                          }).json()
     if info['status'] == 'failed':
         flash(info['error'])
     else:
-        return redirect(url_for("notes.index"))
+        return redirect(url_for("notes.restore_index"))

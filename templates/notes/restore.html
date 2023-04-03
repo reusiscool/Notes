@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Deleted notes{% endblock %}</h1>
+  <a class="action btn-light btn" href="{{ url_for('notes.index') }}">Notes</a>
+{% endblock %}
+
+{% block content %}
+  {% for note in notes %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ note['title'] }}</h1>
+          <div class="about">deleted on {{ note['deleted'] }}</div>
+        </div>
+        <form action="{{ url_for('notes.restore', id_=note['id']) }}" method="post">
+          <input class="btn btn-success" type="submit" value="Restore" onclick="return confirm('Are you sure?');">
+        </form>
+      </header>
+      <p class="body">{{ note['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

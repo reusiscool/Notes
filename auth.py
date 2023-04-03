@@ -11,7 +11,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if session.get('user_id') is None:
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.index"))
 
         return view(**kwargs)
 
@@ -50,8 +50,13 @@ def login():
     return render_template("auth/login.html")
 
 
+@bp.route('/index')
+def index():
+    return render_template('auth/index.html')
+
+
 @bp.route("/logout")
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
-    return redirect(url_for("auth.register"))
+    return redirect(url_for("auth.index"))
