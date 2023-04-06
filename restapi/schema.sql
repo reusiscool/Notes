@@ -3,11 +3,18 @@
 
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS telegram;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL
+);
+
+CREATE TABLE telegram(
+  tg_id INTEGER PRIMARY KEY,
+  user_id INTEGER,
+  FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
 CREATE TABLE post (

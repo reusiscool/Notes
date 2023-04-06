@@ -79,12 +79,12 @@ nav ul li a, nav ul li span, header .action {
 }
 
 .post > header h1 {
-  font-size: 1.5em;
+  font-size: 2em;
   margin-bottom: 0;
 }
 
 .post .about {
-  color: yellow;
+  color: #2f2fa2;
   font-style: italic;
 }
 
@@ -139,12 +139,12 @@ input[type=submit] {
 }
 
 .post{
-  background: #f70269;
+  background: #ff9100;
   padding: 5px;
 }
 
 .content{
-  background: #d9d9d9;
+  background: white;
 }
 
 .btn{
@@ -167,10 +167,5 @@ a.back_arrow:hover{
 }
 
 .btn-primary{
-  background: #f70269;
   border: None;
-}
-
-.btn-primary:hover{
-  background: #bd0452;
 }
