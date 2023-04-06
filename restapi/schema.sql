@@ -12,9 +12,8 @@ CREATE TABLE user (
 );
 
 CREATE TABLE telegram(
-  tg_id INTEGER PRIMARY KEY,
-  user_id INTEGER,
-  FOREIGN KEY (user_id) REFERENCES user (id)
+  tg_id INTEGER,
+  user_id INTEGER NOT NULL
 );
 
 CREATE TABLE post (

@@ -42,6 +42,18 @@ def update_note(id_, title, body):
     return data
 
 
+def link_tg(user_id, tg_id):
+    data = requests.post(f'http://127.0.0.1:5000/user/tg/{tg_id}', json={
+        'user_id': user_id
+    }).json()
+    return data
+
+
+def get_tg_id(tg_id):
+    data = requests.get(f'http://127.0.0.1:5000/user/tg/{tg_id}').json()
+    return data
+
+
 def del_user(id_):
     user_del_data = requests.post(f'http://127.0.0.1:5000/user/{id_}', json={
         'password': 'ADMIN'
@@ -76,6 +88,16 @@ def test_whole():
     update_note(id_, 'TEST_TITLE', 'TEST_BODY')
     dread = read_notes(id_)
     print(dread)
+    sleep(0.1)
+
+    dlink = link_tg(id_, 1)
+    print(dlink)
+    assert dlink['status'] == 'successful'
+    sleep(0.1)
+
+    dtg = get_tg_id(1)
+    print(dtg)
+    assert dtg['_id'] == id_
     sleep(0.1)
 
     ddel = del_user(id_)

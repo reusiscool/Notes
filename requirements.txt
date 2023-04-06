@@ -2,3 +2,5 @@ aiogram
 requests
 flask
 waitress
+dotenv
+pytest

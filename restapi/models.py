@@ -42,6 +42,15 @@ class User:
     def id(self):
         return self._id
 
+    def set_tg_id(self, id_):
+        db = get_db()
+        data = db.execute("Select * FROM telegram WHERE tg_id = ?", (id_,)).fetchone()
+        if data is None:
+            db.execute("INSERT INTO telegram (tg_id, user_id) VALUES (?, ?)", (id_, self.id()))
+        else:
+            db.execute("UPDATE telegram SET user_id = ? WHERE tg_id = ?", (self.id(), id_))
+        db.commit()
+
     @staticmethod
     def with_id(id_):
         data = get_db().execute("SELECT id, username, password FROM user WHERE id = ?", (id_,)).fetchone()
