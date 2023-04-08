@@ -1,6 +1,6 @@
-# Проект pygame «Игра»
+# Web project "Notes"
 
-## 1. Задачи проекта
+## 1. Project tasks
 
 Create web and bot app where you can create, store and see notes.
 
@@ -16,22 +16,26 @@ With bot part you can do the following:
 - Create notifications
 - Get notifications
 
-## 2. Установка и запуск приложения
+## 2. Set up and run
 
-Приложение протестировано для Python версии 3.10.
-Для установки зависимостей приложения создайте новое виртуальное окружение Python 3, активируйте его и выполните команду
+App is built on python 3.10
+To prepare for launch create venv and install requirements:
 
 ```
 pip install -r requirements.txt
 ```
 
-После этого приложение можно будет запустить командой
+To run the full app you need to run database(rest api), website and bot.
+To run the database use:
 ```
-python3 main.py
-python3 main2.py
+python3 main_api.py
 ```
-Или, при работе с *nix, командой
+To run the website use:
 ```
-./main.py
-./main2.py
+python3 main_site.py
 ```
+To run the bot use:
+```
+python3 main_bot.py
+```
+Note that bot and website will not run without database, but bot can run without website and vica versa

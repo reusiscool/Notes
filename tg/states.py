@@ -9,3 +9,8 @@ class FSMRegister(StatesGroup):
 class FSMLogin(StatesGroup):
     name = State()
     password = State()
+
+
+class FSMCreate(StatesGroup):
+    title = State()
+    body = State()

@@ -11,13 +11,13 @@ def create_app():
     )
 
     from .db import init_app
-    from .user import bp as user_bp
+    from .tg import bp as tg_bp
     from .auth import bp as auth_bp
     from .admin import bp as admin_bp
     from .notes import bp as notes_bp
 
     init_app(app)
-    app.register_blueprint(user_bp, url_prefix='/user')
+    app.register_blueprint(tg_bp, url_prefix='/tg')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(notes_bp, url_prefix='/notes')

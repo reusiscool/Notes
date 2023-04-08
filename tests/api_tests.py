@@ -1,10 +1,11 @@
 from time import sleep
-
 import requests
+
+root = 'http://127.0.0.1:5000'
 
 
 def register():
-    data = requests.post('http://127.0.0.1:5000/auth/register', json={
+    data = requests.post(root + '/auth/register', json={
         'username': 'ADMIN',
         'password': 'ADMIN'
     }).json()
@@ -12,7 +13,7 @@ def register():
 
 
 def login():
-    data = requests.post('http://127.0.0.1:5000/auth/login', json={
+    data = requests.post(root + '/auth/login', json={
         'username': 'ADMIN',
         'password': 'ADMIN'
     }).json()
@@ -20,7 +21,7 @@ def login():
 
 
 def create_note(id_, title, body):
-    data = requests.post('http://127.0.0.1:5000/notes/create', json={
+    data = requests.post(root + '/notes/create', json={
         'user_id': id_,
         'body': body,
         'title': title
@@ -29,12 +30,12 @@ def create_note(id_, title, body):
 
 
 def read_notes(id_):
-    data = requests.get(f'http://127.0.0.1:5000/notes/{id_}').json()
+    data = requests.get(root + f'/notes/{id_}').json()
     return data
 
 
 def update_note(id_, title, body):
-    data = requests.post(f'http://127.0.0.1:5000/notes/note/{id_}', json={
+    data = requests.post(root + f'/notes/note/{id_}', json={
         'author_id': id_,
         'body': body,
         'title': title
@@ -43,19 +44,19 @@ def update_note(id_, title, body):
 
 
 def link_tg(user_id, tg_id):
-    data = requests.post(f'http://127.0.0.1:5000/user/tg/{tg_id}', json={
+    data = requests.post(root + f'/tg/{tg_id}', json={
         'user_id': user_id
     }).json()
     return data
 
 
 def get_tg_id(tg_id):
-    data = requests.get(f'http://127.0.0.1:5000/user/tg/{tg_id}').json()
+    data = requests.get(root + f'/tg/{tg_id}').json()
     return data
 
 
 def del_user(id_):
-    user_del_data = requests.post(f'http://127.0.0.1:5000/user/{id_}', json={
+    user_del_data = requests.post(root + f'/auth/{id_}', json={
         'password': 'ADMIN'
     }).json()
     return user_del_data
@@ -97,8 +98,16 @@ def test_whole():
 
     dtg = get_tg_id(1)
     print(dtg)
-    assert dtg['_id'] == id_
+    assert dtg['id'] == id_
     sleep(0.1)
+
+    delink = link_tg(None, 1)
+    print(delink)
+    assert dlink['status'] == 'successful'
+
+    dtg = get_tg_id(1)
+    print(dtg)
+    assert dtg['status'] == 'failed'
 
     ddel = del_user(id_)
     print(dcreate)

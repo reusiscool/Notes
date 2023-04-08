@@ -49,3 +49,17 @@ def login():
         error = "Incorrect password."
     status = 'failed' if error else 'successful'
     return {'status': status, 'error': error, 'id': user.id() if not error else ''}
+
+
+@bp.route('/<int:id_>', methods=("POST",))
+def delete_user(id_):
+    data = request.json
+    error = ''
+    user = User.with_id(id_)
+    if user is None:
+        error = 'NO SUCH USER'
+    elif not check_password_hash(user.password_hash(), data['password']):
+        error = 'NO PERMISSION'
+    else:
+        user.delete()
+    return {"status": "failed" if error else "successful", "error": error}

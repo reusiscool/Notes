@@ -42,6 +42,12 @@ class User:
     def id(self):
         return self._id
 
+    def to_json(self):
+        return {
+            'id': self._id,
+            'username': self._username
+        }
+
     def set_tg_id(self, id_):
         db = get_db()
         data = db.execute("Select * FROM telegram WHERE tg_id = ?", (id_,)).fetchone()
@@ -72,6 +78,12 @@ class User:
         if data is None:
             return None
         return User.with_id(data[0])
+
+    @staticmethod
+    def reset_tg_id(tg_id):
+        db = get_db()
+        db.execute("DELETE FROM telegram WHERE tg_id = ?", (tg_id,))
+        db.commit()
 
 
 class UserAlreadyExists(Exception):

@@ -1,11 +1,11 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
 from dotenv import load_dotenv
-import requests
 import os
 
-from keyboards import start_key
-from auth import register_auth
+from tg.keyboards import start_key, notes_key
+from tg.calls import get_user
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -16,14 +16,19 @@ dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
 @dp.message_handler(commands=['start'])
 async def index(message: types.Message):
-    user = message.from_user
-    data = requests.get(f'http://127.0.0.1:5000/user/tg/{user.id}').json()
+    user_id = message.from_user.id
+    data = get_user(user_id)
     if data['status'] == 'failed':
-        await bot.send_message(user.id, user.full_name, reply_markup=start_key)
+        await bot.send_message(user_id, '*WELCOME MESSAGE*', reply_markup=start_key)
     else:
-        await bot.send_message(user.id, 'Wassap')
+        await bot.send_message(user_id, f'You are logged in as {data["username"]}', reply_markup=notes_key)
 
 
-if __name__ == '__main__':
-    register_auth(dp)
-    executor.start_polling(dp)
+@dp.message_handler(commands=['cancel'], state='*')
+async def cancel(message: types.Message, state: FSMContext):
+    await state.finish()
+    data = get_user(message.from_user.id)
+    if data['status'] == 'failed':
+        await message.reply('Cancelled', reply_markup=start_key)
+    else:
+        await message.reply('Cancelled', reply_markup=notes_key)
