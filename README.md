@@ -13,8 +13,8 @@ The web part will allow you the following
 With bot part you can do the following:
 - Create account
 - Log into web accounts
-- Create notifications
-- Get notifications
+- create notes
+- delete notes
 
 ## 2. Set up and run
 

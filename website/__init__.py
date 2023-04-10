@@ -13,8 +13,10 @@ def create_app():
 
     from .notes import bp as note_bp
     from .auth import bp as auth_bp
+    from .user import bp as user_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(note_bp)
 
     return app

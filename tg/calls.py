@@ -41,3 +41,9 @@ def create(title, body, user_id):
         'user_id': user_id
     }).json()
 
+
+def del_note(user_id, note_id):
+    return requests.post(ROOT + '/notes/delete_note', json={
+        'author_id': user_id,
+        'note_id': note_id
+    }).json()

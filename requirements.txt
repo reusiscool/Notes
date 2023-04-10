@@ -1,6 +1,6 @@
-aiogram
-requests
-flask
-waitress
-dotenv
-pytest
+aiogram~=2.25.1
+requests~=2.28.2
+flask~=2.2.3
+waitress~=2.1.2
+python-dotenv~=1.0.0
+Werkzeug~=2.2.3

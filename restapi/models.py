@@ -57,6 +57,11 @@ class User:
             db.execute("UPDATE telegram SET user_id = ? WHERE tg_id = ?", (self.id(), id_))
         db.commit()
 
+    def set_password(self, password_hash):
+        db = get_db()
+        db.execute("UPDATE user SET password = ? WHERE id = ?", (password_hash, self.id()))
+        db.commit()
+
     @staticmethod
     def with_id(id_):
         data = get_db().execute("SELECT id, username, password FROM user WHERE id = ?", (id_,)).fetchone()

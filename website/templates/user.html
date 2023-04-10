@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}User{% endblock %}</h1>
+  <a class="action btn-light btn" href="{{ url_for('notes.index') }}" role="button">Cancel</a>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label class="input" for="old_password">Old password</label>
+    <input class="input" name="old_password" id="old_password" required>
+    <label class="input" for="new_password">New passsword</label>
+    <input class="input" name="new_password" id="new_password">
+    <div style="display: flex; margin: 0.5rem;">
+      <input style="padding: 0.5rem; margin: 0;" class="btn btn-success" type="submit" name="action" value="Reset">
+      <input style="padding: 0.5rem; margin: 0 0 0 auto;" class="btn btn-danger" type="submit" name="action" value="Delete" onclick="return confirm('Are you sure?');">
+    </div>
+  </form>
+  <hr>
+  <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}">Logout</a>
+{% endblock %}

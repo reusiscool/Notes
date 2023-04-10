@@ -51,6 +51,24 @@ def login():
     return {'status': status, 'error': error, 'id': user.id() if not error else ''}
 
 
+@bp.route('/password', methods=('POST',))
+def password_change():
+    data = request.json
+    user_id = data['user_id']
+    old = data['old_password']
+    new = data['new_password']
+    user = User.with_id(user_id)
+    error = ''
+    if user is None:
+        error = 'No such user'
+    else:
+        if not check_password_hash(user.password_hash(), old):
+            error = 'Wrong password'
+        else:
+            user.set_password(generate_password_hash(new))
+    return {'status': 'failed' if error else 'successful', 'error': error}
+
+
 @bp.route('/<int:id_>', methods=("POST",))
 def delete_user(id_):
     data = request.json
