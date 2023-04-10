@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from .models import User
+from .models import User, Note
 
 bp = Blueprint('tg', __name__)
 
@@ -30,3 +30,13 @@ def set_user_tg_id(tg_id):
         user.set_tg_id(tg_id)
     return {'status': 'failed' if error else 'successful', 'error': error}
 
+
+@bp.route('/notifications')
+def notifications():
+    return [note.to_json() for note in Note.all_on_time()]
+
+
+@bp.route('/user_id/<int:user_id>')
+def get_tg_id(user_id):
+    user = User.with_id(user_id)
+    return user.get_tg()

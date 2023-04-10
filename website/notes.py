@@ -18,9 +18,11 @@ def index():
 @login_required
 def create():
     if request.method == "POST":
+        time = request.form['datetime']
         info = requests.post(current_app.config['API_ROOT'] + '/notes/create',
                              json={'title': request.form["title"],
                                    'body': request.form["body"],
+                                   'datetime': request.form['datetime'],
                                    'user_id': session.get('user_id')}).json()
 
         if info['status'] == 'failed':

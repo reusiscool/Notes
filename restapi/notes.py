@@ -30,6 +30,7 @@ def create_note():
     title = data["title"]
     body = data["body"]
     user_id = data['user_id']
+    datetime = data['datetime']
     error = ''
 
     if not title:
@@ -37,7 +38,7 @@ def create_note():
     elif not User.with_id(user_id):
         error = "NO SUCH USER"
     else:
-        Note.create(title, body, user_id)
+        Note.create(title, body, user_id, datetime)
     return {'status': 'failed' if error else 'successful', 'error': error}
 
 
@@ -60,6 +61,8 @@ def update_note(note_id):
 
     if not title:
         error = "Title is required."
+    elif note is None:
+        error = 'No such note'
     elif note.author().id() != author_id:
         error = 'No permission'
     else:
@@ -71,7 +74,7 @@ def update_note(note_id):
 def delete_note():
     """Delete a post.
 
-    Ensures that the post exists and that the logged in user is the
+    Ensures that the post exists and that the logged-in user is the
     author of the post.
     """
     data = request.json
@@ -95,7 +98,7 @@ def delete_note():
 def restore_note():
     """Restore a post.
 
-    Ensures that the post exists and that the logged in user is the
+    Ensures that the post exists and that the logged-in user is the
     author of the post.
     """
     data = request.json

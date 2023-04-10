@@ -47,3 +47,11 @@ def del_note(user_id, note_id):
         'author_id': user_id,
         'note_id': note_id
     }).json()
+
+
+def get_notifications():
+    return requests.get(ROOT + '/tg/notifications').json()
+
+
+def get_tg_id(user_id):
+    return requests.get(ROOT + f'/tg/user_id/{user_id}').json()

@@ -1,3 +1,5 @@
+import logging
+
 from .db import get_db
 
 
@@ -62,6 +64,11 @@ class User:
         db.execute("UPDATE user SET password = ? WHERE id = ?", (password_hash, self.id()))
         db.commit()
 
+    def get_tg(self):
+        db = get_db()
+        data = db.execute("SELECT tg_id FROM telegram WHERE user_id = ?", (self.id(),)).fetchall()
+        return [i['tg_id'] for i in data]
+
     @staticmethod
     def with_id(id_):
         data = get_db().execute("SELECT id, username, password FROM user WHERE id = ?", (id_,)).fetchone()
@@ -105,11 +112,14 @@ class Note:
         self._deleted = deleted
 
     @staticmethod
-    def create(title, body, author_id):
+    def create(title, body, author_id, notification=None):
         db = get_db()
+        logger = logging.getLogger('waitress')
+        logger.setLevel(logging.INFO)
+        logger.info(notification)
         db.execute(
-            "INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)",
-            (title, body, author_id),
+            "INSERT INTO post (title, body, author_id, notify) VALUES (?, ?, ?, ?)",
+            (title, body, author_id, notification),
         )
         db.commit()
 
@@ -159,6 +169,10 @@ class Note:
     def is_deleted(self):
         return self._deleted is not None
 
+    def to_json(self):
+        return {'id': self.id(), 'body': self.body(), 'author_id': self.author().id(),
+                'title': self.title(), 'created': self.created()}
+
     @staticmethod
     def all():
         posts = get_db().execute(
@@ -167,6 +181,18 @@ class Note:
         ).fetchall()
         return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"], p['deleted'])
                 for p in posts]
+
+    @staticmethod
+    def all_on_time():
+        db = get_db()
+        posts = db.execute("SELECT id FROM post WHERE notify IS NOT NULL AND notify < CURRENT_TIMESTAMP").fetchall()
+        logger = logging.getLogger('waitress')
+        logger.setLevel(logging.INFO)
+        logger.info(posts)
+        for p in posts:
+            db.execute('UPDATE post SET notify = NULL WHERE id = ?', (p['id'],))
+            db.commit()
+        return [Note.with_id(p['id']) for p in posts]
 
     @staticmethod
     def with_author_id(author_id):

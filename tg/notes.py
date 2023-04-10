@@ -14,6 +14,9 @@ async def show_notes(message: types.Message):
         await message.answer('You are not logged in', reply_markup=start_key)
         return
     notes_data = get_notes(user_data['id'])
+    if not notes_data:
+        await message.answer('No notes.')
+        return
     for note in notes_data:
         await message.answer(f'{note["title"]}\n{note["created"]}\n{note["body"]}',
                              reply_markup=InlineKeyboardMarkup().
@@ -54,12 +57,13 @@ async def create_body(message: types.Message, state: FSMContext):
 async def delete_note(callback: types.CallbackQuery):
     data = callback.data
     message = callback.message
+    tg_id = callback.from_user.id
     try:
         id_ = int(data.split()[1])
     except (IndexError, ValueError):
         await message.answer('Wrong index')
         return
-    user_data = get_user(message.from_user.id)
+    user_data = get_user(tg_id)
     if user_data['status'] == 'failed':
         await message.answer(user_data['error'])
         return

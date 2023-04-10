@@ -24,5 +24,6 @@ CREATE TABLE post (
   title TEXT NOT NULL,
   body TEXT NOT NULL,
   deleted TIMESTAMP DEFAULT NULL,
+  notify TIMESTAMP DEFAULT NULL,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
