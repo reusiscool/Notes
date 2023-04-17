@@ -4,7 +4,8 @@
   <h1>{% block title %}Notes{% endblock %}</h1>
   <a class="action btn-light btn" href="{{ url_for('notes.create') }}">New</a>
   <a class="action btn-light btn" href="{{ url_for('notes.restore_index') }}">Restore Notes</a>
-  <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}">Logout</a>
+  <a class="action btn-dark btn" href="{{ url_for('user.user_index') }}">Account</a>
+  <script src="{{ url_for('static', filename='index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -13,7 +14,7 @@
       <header>
         <div>
           <h1>{{ note['title'] }}</h1>
-           <div class="about" id="created">created on {{ note['created'] }}</div>
+           <div class="about created">created on {{ note['created'] }}</div>
           <div class="about">
             {% if note['notify'] != None %} notification on {{ note['notify'] }} {% endif %}
           </div>

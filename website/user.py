@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, request, redirect, render_template, url_for, session, current_app
+from flask import Blueprint, flash, request, redirect, render_template, url_for, session, current_app, abort
 import requests
 
 bp = Blueprint('user', __name__, url_prefix="/auth")
@@ -30,4 +30,8 @@ def user_index():
             error = data['error']
 
         flash(error)
-    return render_template('user.html')
+    user_id = session.get('user_id')
+    user = requests.get(current_app.config['API_ROOT'] + f'/auth/user/{user_id}').json()
+    if user['status'] == 'failed':
+        abort(404)
+    return render_template('user.html', username=user['username'])

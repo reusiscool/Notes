@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}User{% endblock %}</h1>
+  <h1>{% block title %}Your account, {{ username }}.{% endblock %}</h1>
+  <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}" role="button">Logout</a>
   <a class="action btn-light btn" href="{{ url_for('notes.index') }}" role="button">Cancel</a>
 {% endblock %}
 
@@ -17,5 +18,4 @@
     </div>
   </form>
   <hr>
-  <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}">Logout</a>
 {% endblock %}

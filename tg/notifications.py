@@ -1,5 +1,4 @@
 import asyncio
-# import aioschedule as aioschedule
 
 from tg.init import create_bot
 from tg.calls import get_notifications, get_tg_id
@@ -14,11 +13,9 @@ async def notify():
 
 
 async def scheduler():
-    # aioschedule.every(10).seconds.do(notify)
     while True:
         await notify()
-        # await aioschedule.run_pending()
-        await asyncio.sleep(3)
+        await asyncio.sleep(10)
 
 
 async def on_startup(_):

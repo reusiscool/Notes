@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 
-from tg.init import create_bot, create_dp
+from tg.init import create_bot
 from tg.keyboards import start_key, notes_key
 from tg.calls import get_user
 
@@ -12,7 +12,8 @@ async def index(message: types.Message):
     user_id = message.from_user.id
     data = get_user(user_id)
     if data['status'] == 'failed':
-        await bot.send_message(user_id, '*WELCOME MESSAGE*', reply_markup=start_key)
+        await bot.send_message(user_id, "Hi, I'm a bot that can store your notes\n"
+                                        "and remind you of your pending tasks.", reply_markup=start_key)
     else:
         await bot.send_message(user_id, f'You are logged in as {data["username"]}', reply_markup=notes_key)
 

@@ -27,8 +27,6 @@ class User:
         for note in notes:
             note.delete_fr()
         db = get_db()
-        # todo
-        # db.execute("DELETE FROM telegram WHERE user_id = ?", (self.id()))
         db.execute(
             "DELETE FROM user WHERE id = ?",
             (self.id(),),

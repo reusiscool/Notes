@@ -81,3 +81,17 @@ def delete_user(id_):
     else:
         user.delete()
     return {"status": "failed" if error else "successful", "error": error}
+
+
+@bp.route('/user/<int:id_>')
+def get_user(id_):
+    user = User.with_id(id_)
+    if user is None:
+        error = 'No such user'
+        d = {}
+    else:
+        error = ''
+        d = user.to_json()
+    d['status'] = 'failed' if error else 'successful'
+    d['error'] = error
+    return d
