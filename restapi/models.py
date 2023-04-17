@@ -1,4 +1,4 @@
-import logging
+from datetime import datetime
 
 from .db import get_db
 
@@ -103,20 +103,22 @@ class UserAlreadyExists(Exception):
 
 
 class Note:
-    def __init__(self, id_, title, body, author, created, deleted):
+    def __init__(self, id_, title, body, author, created, deleted, notify):
         self._id = id_
         self._title = title
         self._body = body
         self._author = author
         self._created = created
         self._deleted = deleted
+        self._notify = notify
 
     @staticmethod
     def create(title, body, author_id, notification=None):
         db = get_db()
-        logger = logging.getLogger('waitress')
-        logger.setLevel(logging.INFO)
-        logger.info(notification)
+        if notification == '':
+            notification = None
+        else:
+            notification = datetime.strptime(notification, '%Y-%m-%dT%H:%M')
         db.execute(
             "INSERT INTO post (title, body, author_id, notify) VALUES (?, ?, ?, ?)",
             (title, body, author_id, notification),
@@ -151,6 +153,9 @@ class Note:
     def id(self):
         return self._id
 
+    def notify(self):
+        return self._notify
+
     def title(self):
         return self._title
 
@@ -171,24 +176,23 @@ class Note:
 
     def to_json(self):
         return {'id': self.id(), 'body': self.body(), 'author_id': self.author().id(),
-                'title': self.title(), 'created': self.created()}
+                'title': self.title(), 'created': self.created(), 'notify': self.notify()}
 
     @staticmethod
     def all():
         posts = get_db().execute(
-            "SELECT id, title, body, created, author_id, deleted"
+            "SELECT id, title, body, created, author_id, deleted, notify"
             " FROM post ORDER BY created DESC"
         ).fetchall()
-        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"], p['deleted'])
+        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]),
+                     p["created"], p['deleted'], p['notify'])
                 for p in posts]
 
     @staticmethod
     def all_on_time():
         db = get_db()
-        posts = db.execute("SELECT id FROM post WHERE notify IS NOT NULL AND notify < CURRENT_TIMESTAMP").fetchall()
-        logger = logging.getLogger('waitress')
-        logger.setLevel(logging.INFO)
-        logger.info(posts)
+        posts = db.execute("SELECT id FROM post WHERE notify IS NOT NULL "
+                           "AND notify < CURRENT_TIMESTAMP").fetchall()
         for p in posts:
             db.execute('UPDATE post SET notify = NULL WHERE id = ?', (p['id'],))
             db.commit()
@@ -197,18 +201,19 @@ class Note:
     @staticmethod
     def with_author_id(author_id):
         posts = get_db().execute(
-            "SELECT id, title, body, created, author_id, deleted"
+            "SELECT id, title, body, created, author_id, deleted, notify"
             " FROM post WHERE author_id = ? ORDER BY created DESC", (author_id,)
         ).fetchall()
-        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]), p["created"], p['deleted'])
+        return [Note(p["id"], p["title"], p["body"], User.with_id(p["author_id"]),
+                     p["created"], p['deleted'], p['notify'])
                 for p in posts]
 
     @staticmethod
     def with_id(id_):
         data = get_db().execute(
-            "SELECT id, title, body, created, author_id, deleted"
+            "SELECT id, title, body, created, author_id, deleted, notify"
             " FROM post WHERE id = ?", (id_,)).fetchone()
         if data is None:
             return None
         return Note(data["id"], data["title"], data["body"],
-                    User.with_id(data["author_id"]), data["created"], data['deleted'])
+                    User.with_id(data["author_id"]), data["created"], data['deleted'], data["notify"])

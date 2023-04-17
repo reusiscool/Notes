@@ -8,17 +8,13 @@ bp = Blueprint('notes', __name__)
 @bp.route('/<int:user_id>')
 def get_all_notes(user_id):
     """Show all users notes, most recent first."""
-    return [{'id': note.id(), 'body': note.body(),
-             'title': note.title(), 'created': note.created()}
-            for note in Note.with_author_id(user_id) if not note.is_deleted()]
+    return [note.to_json() for note in Note.with_author_id(user_id) if not note.is_deleted()]
 
 
 @bp.route('/deleted/<int:user_id>')
 def get_all_deleted_notes(user_id):
     """Show all users deleted notes, most recent first."""
-    res = [{'id': note.id(), 'body': note.body(),
-            'title': note.title(), 'created': note.created(), 'deleted': note.deleted()}
-           for note in Note.with_author_id(user_id) if note.is_deleted()]
+    res = [note.to_json() for note in Note.with_author_id(user_id) if note.is_deleted()]
     res.sort(key=lambda x: x['deleted'], reverse=True)
     return res
 

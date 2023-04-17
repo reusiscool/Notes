@@ -3,16 +3,17 @@
 {% block header %}
   <h1>{% block title %}New Note{% endblock %}</h1>
   <a class="action btn-light btn" href="{{ url_for('notes.index') }}" role="button">Cancel</a>
+  <script src="{{ url_for('static', filename='create.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label class="input" for="title">Title</label>
-    <input class="input" name="title" id="title" value="{{ request.form['title'] }}" required>
-    <label class="input" for="body">Body</label>
-    <textarea class="input" name="body" id="body">{{ request.form['body'] }}</textarea>
-    <label class="input" for="datetime">Notification time(can be empty)</label>
-    <input type="datetime-local" name="datetime" id="datetime">
-    <input class="btn btn-success" type="submit" value="Save">
-  </form>
+<form onsubmit="post();return false">
+  <label class="input" for="title">Title</label>
+  <input class="input" name="title" id="title" required>
+  <label class="input" for="body">Body</label>
+  <textarea class="input" name="body" id="body"></textarea>
+  <label class="input" for="datetime">Notification time(can be empty)</label>
+  <input type="datetime-local" name="datetime" id="datetime">
+  <input class="btn btn-success" type="submit" value="Save" id="create_submit">
+</form>
 {% endblock %}

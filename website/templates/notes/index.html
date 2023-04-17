@@ -13,7 +13,10 @@
       <header>
         <div>
           <h1>{{ note['title'] }}</h1>
-          <div class="about">created on {{ note['created'] }}</div>
+           <div class="about" id="created">created on {{ note['created'] }}</div>
+          <div class="about">
+            {% if note['notify'] != None %} notification on {{ note['notify'] }} {% endif %}
+          </div>
         </div>
         <a class="action btn-light btn" href="{{ url_for('notes.update', id_=note['id']) }}">Edit</a>
       </header>

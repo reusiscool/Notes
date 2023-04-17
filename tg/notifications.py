@@ -1,6 +1,5 @@
 import asyncio
-
-import aioschedule as aioschedule
+# import aioschedule as aioschedule
 
 from tg.init import create_bot
 from tg.calls import get_notifications, get_tg_id

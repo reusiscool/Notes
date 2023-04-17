@@ -18,7 +18,6 @@ def index():
 @login_required
 def create():
     if request.method == "POST":
-        time = request.form['datetime']
         info = requests.post(current_app.config['API_ROOT'] + '/notes/create',
                              json={'title': request.form["title"],
                                    'body': request.form["body"],
@@ -26,9 +25,9 @@ def create():
                                    'user_id': session.get('user_id')}).json()
 
         if info['status'] == 'failed':
-            flash(info['error'])
+            return {'status': 'failed', 'error': info['error']}
         else:
-            return redirect(url_for("notes.index"))
+            return {'status': 'successful'}
 
     return render_template("notes/create.html")
 

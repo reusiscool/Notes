@@ -33,7 +33,8 @@ def create_note(id_, title, body):
     data = requests.post(root + '/notes/create', json={
         'user_id': id_,
         'body': body,
-        'title': title
+        'title': title,
+        'datetime': ''
     }).json()
     return data
 
