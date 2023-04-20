@@ -62,7 +62,7 @@ class User:
         db.execute("UPDATE user SET password = ? WHERE id = ?", (password_hash, self.id()))
         db.commit()
 
-    def get_tg(self):
+    def get_tg(self) -> list[int]:
         db = get_db()
         data = db.execute("SELECT tg_id FROM telegram WHERE user_id = ?", (self.id(),)).fetchall()
         return [i['tg_id'] for i in data]
@@ -174,7 +174,7 @@ class Note:
 
     def to_json(self):
         return {'id': self.id(), 'body': self.body(), 'author_id': self.author().id(),
-                'title': self.title(), 'created': self.created(), 'notify': self.notify()}
+                'title': self.title(), 'created': self.created(), 'notify': self.notify(), 'deleted': self.deleted()}
 
     @staticmethod
     def all():

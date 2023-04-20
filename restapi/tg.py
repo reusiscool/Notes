@@ -39,4 +39,6 @@ def notifications():
 @bp.route('/user_id/<int:user_id>')
 def get_tg_id(user_id):
     user = User.with_id(user_id)
+    if user is None:
+        return []
     return user.get_tg()

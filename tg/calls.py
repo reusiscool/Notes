@@ -38,7 +38,8 @@ def create(title, body, user_id):
     return requests.post(ROOT + '/notes/create', json={
         'title': title,
         'body': body,
-        'user_id': user_id
+        'user_id': user_id,
+        'datetime': ''
     }).json()
 
 

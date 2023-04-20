@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, request, redirect, render_template, url_for, session, current_app
+from flask import Blueprint, flash, request, redirect, render_template, url_for, session, current_app, abort
 import requests
 
 from .auth import login_required
@@ -29,7 +29,8 @@ def create():
         else:
             return {'status': 'successful'}
 
-    return render_template("notes/create.html")
+    req = requests.get(current_app.config['API_ROOT'] + f'/tg/user_id/{session.get("user_id")}').json()
+    return render_template("notes/create.html", can_notify=(len(req) != 0))
 
 
 @bp.route("/<int:id_>/update", methods=("GET", "POST"))

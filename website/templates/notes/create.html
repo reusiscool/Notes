@@ -12,8 +12,10 @@
   <input class="input" name="title" id="title" required>
   <label class="input" for="body">Body</label>
   <textarea class="input" name="body" id="body"></textarea>
-  <label class="input" for="datetime">Notification time(can be empty)</label>
-  <input type="datetime-local" name="datetime" id="datetime">
+  {% if can_notify %}
+    <label class="input" for="datetime">Notification time(can be empty)</label>
+    <input class="input" type="datetime-local" name="datetime" id="datetime">
+  {% endif %}
   <input class="btn btn-success" type="submit" value="Save" id="create_submit">
 </form>
 {% endblock %}

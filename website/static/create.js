@@ -2,7 +2,10 @@ function post () {
     let data = new FormData();
     data.append("title", document.getElementById("title").value);
     data.append("body", document.getElementById("body").value);
-    let date_info = document.getElementById("datetime").value;
+    let date_info = document.getElementById("datetime");
+    if (date_info){
+        date_info = date_info.value;
+    }
     if (date_info){
         let date = new Date(date_info);
         data.append("datetime", `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}T${date.getUTCHours()}:${date.getUTCMinutes()}`);

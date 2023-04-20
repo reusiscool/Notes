@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block header %}
+  <a target="_blank" href="https://t.me/lyceum_notes_bot">
+    <img src="https://api.живуспортом.рф/imagecache/size1024_jpeg/news_image/258/257802/6245481f356c8.jpeg" style="height: 4rem; width: 8rem; margin: 0.5rem 1rem 0 0">
+  </a>
   <h1>{% block title %}Your account, {{ username }}.{% endblock %}</h1>
   <a class="action btn-dark btn" href="{{ url_for('auth.logout') }}" role="button">Logout</a>
   <a class="action btn-light btn" href="{{ url_for('notes.index') }}" role="button">Cancel</a>

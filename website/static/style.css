@@ -169,3 +169,7 @@ a.back_arrow:hover{
 .btn-primary{
   border: None;
 }
+
+img:hover {
+    cursor: pointer;
+}
